@@ -1,0 +1,26 @@
+﻿model:
+  use_continuity: true
+  use_uncertainty: false
+  use_reasoning: true
+  reasoning_mode: transformer
+  reasoning_num_iters: 4
+  context_module: large_kernel
+
+dataset:
+  labels:
+    generate_continuity: true
+    generate_uncertainty: false
+    continuity_band_width: 9
+    use_soft_continuity: true
+
+loss:
+  lambda_continuity: 0.8
+  lambda_structure: 0.5
+  lambda_uncertainty: 0.0
+  use_direction_smooth: true
+  use_continuity_preserve: true
+  use_inter_row_separation: true
+
+infer:
+  seed_from: refined_structure
+  stop_continuity_threshold: 0.15

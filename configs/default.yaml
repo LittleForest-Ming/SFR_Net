@@ -1,0 +1,121 @@
+﻿project:
+  name: sfr_net
+  seed: 42
+  output_dir: ./outputs
+  device: cuda
+  num_workers: 4
+
+dataset:
+  name: crop_row
+  root: ./data
+  train_split: train
+  val_split: val
+  test_split: test
+  input_height: 512
+  input_width: 512
+  normalize: true
+  labels:
+    generate_center: true
+    generate_orientation: true
+    generate_continuity: false
+    generate_uncertainty: false
+    center_sigma: 3.0
+    orientation_band_width: 5
+    continuity_band_width: 7
+    use_soft_continuity: false
+    use_pseudo_uncertainty: false
+
+model:
+  backbone: resnet34
+  pretrained: true
+  neck: fpn
+  fused_channels: 128
+  context_module: large_kernel
+  context_channels: 128
+  use_continuity: false
+  use_uncertainty: false
+  use_reasoning: false
+  reasoning_mode: explicit
+  reasoning_num_iters: 0
+  decoder_mode: greedy_bidirectional
+  decode_during_forward: false
+
+context:
+  transformer_num_layers: 2
+  transformer_num_heads: 4
+  transformer_mlp_ratio: 2.0
+  transformer_dropout: 0.0
+
+reasoning:
+  transformer_num_layers: 2
+  transformer_num_heads: 4
+  transformer_mlp_ratio: 2.0
+  transformer_dropout: 0.0
+
+loss:
+  center_type: focal
+  orientation_type: cosine_l1
+  continuity_type: bce
+  uncertainty_type: l1
+  lambda_center: 1.0
+  lambda_orientation: 1.0
+  lambda_orientation_norm: 0.1
+  lambda_continuity: 0.0
+  lambda_structure: 0.0
+  lambda_uncertainty: 0.0
+  use_direction_smooth: false
+  use_continuity_preserve: false
+  use_inter_row_separation: false
+
+train:
+  batch_size: 8
+  epochs: 120
+  optimizer: adamw
+  lr: 0.0002
+  weight_decay: 0.0001
+  scheduler: cosine
+  warmup_iters: 1000
+  amp: true
+  grad_clip: 1.0
+  resume: ''
+  save_every: 1
+  val_every: 1
+  augment:
+    hflip: true
+    brightness_contrast: true
+    scale_jitter: true
+    mild_affine: true
+    gaussian_blur: false
+    strong_rotation: false
+
+infer:
+  save_fields: true
+  save_field_arrays: false
+  save_rows: true
+  save_vis: true
+  seed_from: center
+  seed_threshold: 0.35
+  seed_nms_kernel: 7
+  restrict_seed_region: false
+  seed_region: lower_half
+  step_size: 3.0
+  candidate_radius: 4
+  stop_score_threshold: 0.15
+  stop_continuity_threshold: 0.10
+  stop_uncertainty_threshold: 0.85
+  max_steps: 256
+  smooth_trajectory: true
+  prune_short_rows: true
+  min_row_points: 20
+  merge_rows: true
+  merge_distance_thresh: 8.0
+  merge_angle_thresh: 15.0
+
+eval:
+  metrics:
+    - pixel_f1
+    - row_f1
+    - centerline_distance
+    - continuity_score
+    - uncertainty_mae
+  eval_on_decoded_rows: true

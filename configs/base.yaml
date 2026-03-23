@@ -1,0 +1,18 @@
+﻿model:
+  use_continuity: false
+  use_uncertainty: false
+  use_reasoning: false
+  reasoning_num_iters: 0
+
+dataset:
+  labels:
+    generate_continuity: false
+    generate_uncertainty: false
+
+loss:
+  lambda_continuity: 0.0
+  lambda_structure: 0.0
+  lambda_uncertainty: 0.0
+
+infer:
+  seed_from: center

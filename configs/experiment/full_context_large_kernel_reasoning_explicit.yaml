@@ -1,0 +1,24 @@
+﻿model:
+  use_continuity: true
+  use_uncertainty: true
+  use_reasoning: true
+  reasoning_mode: explicit
+  reasoning_num_iters: 4
+  context_module: large_kernel
+
+dataset:
+  labels:
+    generate_continuity: true
+    generate_uncertainty: true
+    use_soft_continuity: true
+    use_pseudo_uncertainty: true
+
+loss:
+  lambda_continuity: 0.8
+  lambda_structure: 0.5
+  lambda_uncertainty: 0.2
+
+infer:
+  seed_from: refined_structure
+  stop_continuity_threshold: 0.15
+  stop_uncertainty_threshold: 0.70
